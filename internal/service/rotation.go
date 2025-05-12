@@ -5,6 +5,7 @@ import (
 	"github.com/germanov-v/go-rotator/internal/model"
 	"github.com/germanov-v/go-rotator/internal/repository"
 	"github.com/pkg/errors"
+	"math"
 )
 
 type RotationService struct {
@@ -48,4 +49,33 @@ func (s *RotationService) Rotate(ctx context.Context, slot model.SlotId, group m
 	}
 
 	// ucb1
+	var best model.BannerId
+	var bestScore float64 = -1
+	// логариф
+	//totalLn := math.Log(totalDisplay)
+	totalLn := math.Log(float64(totalDisplay))
+
+	for _, st := range stats {
+		// ctr Click-Through Rate
+		ctr := float64(st.CountClicks) / float64(st.CountDisplays)
+
+		// коэфффциент с использованием интегрвала доверительного
+		sqrt := math.Sqrt(2 * totalLn / float64(st.CountDisplays))
+
+		// балл
+		score := ctr + bestScore*sqrt
+
+		if score > bestScore {
+			bestScore = score
+			best = st.Id
+		}
+	}
+
+	if err := s.repo.IncrementDisplay(ctx, slot, best, group); err != nil {
+		// return "", err
+		//	return best, err
+		return best, err
+	}
+
+	return best, nil
 }
