@@ -25,6 +25,10 @@ func (r *mockRepo) AddBanner(ctx context.Context, slot model.SlotId, banner mode
 	return nil
 }
 
+func (r *mockRepo) AddGroup(ctx context.Context, group model.GroupId) error {
+	return nil
+}
+
 func (r *mockRepo) RemoveBanner(ctx context.Context, slot model.SlotId, banner model.BannerId) error {
 	return nil
 }

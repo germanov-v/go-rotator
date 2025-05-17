@@ -50,9 +50,9 @@ func (s *RotationService) Rotate(ctx context.Context, slot model.SlotId, group m
 
 	// ucb1
 	var best model.BannerId
-	var bestScore float64 = -1
-	// логариф
-	//totalLn := math.Log(totalDisplay)
+	//var bestScore float64 = -1
+	// логарифм
+	bestScore := math.Inf(-1)
 	totalLn := math.Log(float64(totalDisplay))
 
 	for _, st := range stats {
@@ -63,7 +63,7 @@ func (s *RotationService) Rotate(ctx context.Context, slot model.SlotId, group m
 		sqrt := math.Sqrt(2 * totalLn / float64(st.CountDisplays))
 
 		// балл
-		score := ctr + bestScore*sqrt
+		score := ctr + sqrt
 
 		if score > bestScore {
 			bestScore = score
@@ -71,7 +71,8 @@ func (s *RotationService) Rotate(ctx context.Context, slot model.SlotId, group m
 		}
 	}
 
-	if err := s.repo.IncrementDisplay(ctx, slot, best, group); err != nil {
+	err = s.repo.IncrementDisplay(ctx, slot, best, group)
+	if err != nil {
 		// return "", err
 		//	return best, err
 		return best, err

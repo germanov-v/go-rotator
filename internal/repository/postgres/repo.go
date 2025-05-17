@@ -50,6 +50,17 @@ func (r *PostgresRepo) AddBanner(ctx context.Context, slot model.SlotId, banner 
 	return tx.Commit()
 }
 
+func (r *PostgresRepo) AddGroup(ctx context.Context, group model.GroupId) error {
+
+	if _, err := r.db.ExecContext(ctx,
+		"INSERT INTO groups(id) VALUES($1) ON CONFLICT(id) DO NOTHING",
+		group,
+	); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *PostgresRepo) RemoveBanner(ctx context.Context, slot model.SlotId, banner model.BannerId) error {
 	res, err := r.db.ExecContext(ctx,
 		"DELETE FROM slot_banners WHERE slot_id=$1 AND banner_id=$2",

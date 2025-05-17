@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+
+
+  migrations:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: migrations
+    depends_on:
+      - db
+    environment:
+      SERVICE: migrations
+      DATABASE_MIGRATECONNECTION: postgres://postgres:postgres@db:5432/rotatordb?sslmode=disable
+    command: >
+      sh -c "
+        until pg_isready -h db -U postgres; do
+          echo 'waiting for postgres...'; sleep 1;
+        done
+        exec /bin/app --config=/app/config.json
+      "
+    volumes:
+      - ./config/migrations.json:/app/config.json:ro
+
+  rotator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: rotator
+    depends_on:
+      - migrations
+    ports:
+      - '8080:8080'
+    environment:
+      SERVICE: rotator
+      DATABASE_CONNECTIONSTRING: postgres://postgres:postgres@db:5432/rotatordb?sslmode=disable
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: '8080'
+    volumes:
+      - ./config/rotator.json:/app/config.json:ro
+    command: ["/bin/app", "--config=/app/config.json"]
+
+  integrations:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: integrations
+    depends_on:
+      - rotator
+    environment:
+      SERVICE: integrations
+      SERVER_APIGATEWAYHOST: http://rotator
+      SERVER_APIGATEWAYPORT: '8080'
+      DATABASE_CONNECTIONSTRING: postgres://postgres:postgres@db:5432/rotatordb?sslmode=disable
+    volumes:
+      - ./config/integrations.json:/app/config.json:ro
+    command: ["/bin/app", "--config=/app/config.json"]
+
+volumes:
+  pgdata:
