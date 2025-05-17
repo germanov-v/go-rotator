@@ -49,27 +49,27 @@ func RunAll(ctx context.Context, cfg *config.Config) error {
 	}
 
 	// http_handler.AddBannerHandler(repo)).Methods("POST")
-	//if err := testAddBanner(host, slot1, []string{bannerA, bannerB}); err != nil {
-	//	return fmt.Errorf("testAddBanner failed: %w", err)
-	//}
+	if err := testAddBanner(host, slot1, []string{bannerA, bannerB}); err != nil {
+		return fmt.Errorf("testAddBanner failed: %w", err)
+	}
 
 	// http_handler.RotateBannerHandler(service)).Methods("GET")
 	// Error expect 400 http_handler.RotateBannerHandler(service)).Methods("GET")
-	//err := testRotateMissingGroup(host, slot1)
-	//if err != nil {
-	//	return fmt.Errorf("testRotateMissingGroup failed: %w", err)
-	//}
+	err = testRotateMissingGroup(host, slot1)
+	if err != nil {
+		return fmt.Errorf("testRotateMissingGroup failed: %w", err)
+	}
 	//
 	//// http_handler.RotateBannerHandler(service)).Methods("GET")
 	//// Rotate  group + add click
-	//banner, err := testRotate(host, slot1, group1)
-	//if err != nil {
-	//	return fmt.Errorf("testRotate failed: %w", err)
-	//}
-	//err = testRecordClick(host, slot1, banner, group1)
-	//if err != nil {
-	//	return fmt.Errorf("testRecordClick failed: %w", err)
-	//}
+	banner, err := testRotate(host, slot1, group1)
+	if err != nil {
+		return fmt.Errorf("testRotate failed: %w", err)
+	}
+	err = testRecordClick(host, slot1, banner, group1)
+	if err != nil {
+		return fmt.Errorf("testRecordClick failed: %w", err)
+	}
 	//
 
 	//
@@ -262,47 +262,5 @@ func testPopularBanner(host, slot string, banners []string, group string) error 
 		//return fmt.Errorf("counts[banners[0]] <= counts[banners[1]] IS TRUE  %d", banners[0])
 		return fmt.Errorf("expected %s more popular: %d vs %d", banners[0], counts[banners[0]], counts[banners[1]])
 	}
-	return nil
-}
-
-func RunAllV1(cfg *config.Config) error {
-	host := fmt.Sprintf("%s:%d", cfg.ServerConfig.ApiGatewayHost, cfg.ServerConfig.Port)
-
-	// http_handler.AddBannerHandler(repo)).Methods("POST")
-	if err := testAddBanner(host, slot1, []string{bannerA, bannerB}); err != nil {
-		return fmt.Errorf("testAddBanner failed: %w", err)
-	}
-
-	// http_handler.RotateBannerHandler(service)).Methods("GET")
-	// Error expect 400 http_handler.RotateBannerHandler(service)).Methods("GET")
-	if err := testRotateMissingGroup(host, slot1); err != nil {
-		return fmt.Errorf("testRotateMissingGroup failed: %w", err)
-	}
-
-	// http_handler.RotateBannerHandler(service)).Methods("GET")
-	// Rotate  group + add click
-	banner, err := testRotate(host, slot1, group1)
-	if err != nil {
-		return fmt.Errorf("testRotate failed: %w", err)
-	}
-	if err := testRecordClick(host, slot1, banner, group1); err != nil {
-		return fmt.Errorf("testRecordClick failed: %w", err)
-	}
-
-	// http_handler.RemoveBannerHandler(repo)).Methods("DELETE")
-	if err := testRemoveBanner(host, slot1, bannerA); err != nil {
-		return fmt.Errorf("testRemoveBanner failed: %w", err)
-	}
-
-	// least once: Перебор всех: после большого количества показов, каждый баннер должен быть показан хотя один раз.
-	if err := testRotateAllBanners(host, slot2, []string{bannerD, bannerC, bannerE}, group2); err != nil {
-		return fmt.Errorf("testRotateAllBanners failed: %w", err)
-	}
-
-	// popular
-	if err := testPopularBanner(host, slot3, []string{bannerF, bannerG}, group3); err != nil {
-		return fmt.Errorf("testPopularBanner failed: %w", err)
-	}
-
 	return nil
 }
