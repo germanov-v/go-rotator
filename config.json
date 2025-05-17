@@ -2,5 +2,11 @@
   "Database" : {
     "ConnectionString": "host=127.0.0.1 port=5432 user=postgres password=postgres dbname=go_rotator sslmode=disable",
     "MigrateConnection": "postgres://postgres:postgres@127.0.0.1:5432/go_rotator?sslmode=disable"
-   }
+   },
+  "Server": {
+    "Host": "127.0.0.1",
+    "Port": 8080,
+    "ApiGatewayHost": "http://127.0.0.1",
+    "ApiGatewayPort": 5221
+  }
 }
