@@ -21,7 +21,7 @@ clean:
 
 
 up:
-	docker-compose up -d
+	docker-compose up -d --build
 	@echo "docker-compose up -d start..."
 
 down:

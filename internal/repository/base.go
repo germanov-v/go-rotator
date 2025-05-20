@@ -8,6 +8,7 @@ import (
 type Repository interface {
 	AddBanner(ctx context.Context, slot model.SlotId, banner model.BannerId) error
 	AddGroup(ctx context.Context, group model.GroupId) error
+	AddSlot(ctx context.Context, slot model.SlotId) error
 	RemoveBanner(ctx context.Context, slot model.SlotId, banner model.BannerId) error
 	IncrementDisplay(ctx context.Context, slot model.SlotId, banner model.BannerId, group model.GroupId) error
 	IncrementClick(ctx context.Context, slot model.SlotId, banner model.BannerId, group model.GroupId) error

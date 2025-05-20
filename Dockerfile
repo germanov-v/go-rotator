@@ -20,7 +20,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-#COPY --from=builder /app/migration /app/migration
+COPY --from=builder /app/migrations /app/migrations
 COPY --from=builder /bin/app /bin/app
 COPY config.docker.json /app/config.json
 

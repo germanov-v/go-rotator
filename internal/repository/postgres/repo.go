@@ -61,6 +61,16 @@ func (r *PostgresRepo) AddGroup(ctx context.Context, group model.GroupId) error 
 	return nil
 }
 
+func (r *PostgresRepo) AddSlot(ctx context.Context, slot model.SlotId) error {
+	if _, err := r.db.ExecContext(ctx,
+		"INSERT INTO slots(id) VALUES($1) ON CONFLICT(id) DO NOTHING",
+		slot,
+	); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *PostgresRepo) RemoveBanner(ctx context.Context, slot model.SlotId, banner model.BannerId) error {
 	res, err := r.db.ExecContext(ctx,
 		"DELETE FROM slot_banners WHERE slot_id=$1 AND banner_id=$2",
