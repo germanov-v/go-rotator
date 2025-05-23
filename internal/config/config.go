@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strconv"
 )
 
 type Config struct {
@@ -55,18 +54,4 @@ func LoadConfig(path string) (*Config, error) {
 	//overrideString(&cfg.DbBaseConfig.MigrateConnection, "DATABASE_MIGRATECONNECTION")
 
 	return cfg, nil
-}
-
-func overrideString(field *string, envName string) {
-	if v, ok := os.LookupEnv(envName); ok && v != "" {
-		*field = v
-	}
-}
-
-func overrideInt(field *int, envName string) {
-	if v, ok := os.LookupEnv(envName); ok && v != "" {
-		if i, err := strconv.Atoi(v); err == nil {
-			*field = i
-		}
-	}
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/germanov-v/go-rotator/internal/config"
 	"github.com/germanov-v/go-rotator/internal/repository/postgres"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -105,7 +104,7 @@ func testAddBanner(host, slot string, banners []string) error {
 		}
 		defer resp.Body.Close()
 		if resp.StatusCode != http.StatusCreated {
-			b, _ := ioutil.ReadAll(resp.Body)
+			b, _ := io.ReadAll(resp.Body)
 			return fmt.Errorf("expected 201, got %d: %s", resp.StatusCode, string(b))
 		}
 	}
@@ -127,7 +126,7 @@ func testRotateMissingGroup(host, slot string) error {
 	//	}
 	//}(resp.Body)
 	if resp.StatusCode != http.StatusBadRequest {
-		b, _ := ioutil.ReadAll(resp.Body)
+		b, _ := io.ReadAll(resp.Body)
 		return fmt.Errorf("expected 400, got %d: %s", resp.StatusCode, string(b))
 	}
 	return nil

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/germanov-v/go-rotator/internal/model"
 	_ "github.com/lib/pq"
 )
@@ -27,7 +28,14 @@ func (r *PostgresRepo) AddBanner(ctx context.Context, slot model.SlotId, banner 
 	if err != nil {
 		return err
 	}
-	defer tx.Rollback()
+
+	defer func() {
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				err = fmt.Errorf("rollback failed: %v; base error: %w", rollbackErr, err)
+			}
+		}
+	}()
 
 	if _, err := tx.ExecContext(ctx,
 		"INSERT INTO slots(id) VALUES($1) ON CONFLICT(id) DO NOTHING",

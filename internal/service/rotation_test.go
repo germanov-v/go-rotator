@@ -25,6 +25,10 @@ func (r *mockRepo) AddBanner(ctx context.Context, slot model.SlotId, banner mode
 	return nil
 }
 
+func (r *mockRepo) AddSlot(ctx context.Context, slot model.SlotId) error {
+	return nil
+}
+
 func (r *mockRepo) AddGroup(ctx context.Context, group model.GroupId) error {
 	return nil
 }
@@ -50,18 +54,6 @@ func (m *mockRepo) GetStats(ctx context.Context, slot model.SlotId, banner model
 }
 func (m *mockRepo) IncrementDisplay(ctx context.Context, slot model.SlotId, banner model.BannerId, group model.GroupId) error {
 
-	//key := string(slot) + ":" + string(banner) + ":" + string(group)
-	//m.displays = append(m.displays, struct {
-	//	slot   model.SlotId
-	//	banner model.BannerId
-	//	group  model.GroupId
-	//}{slot, banner, group})
-	//if st, ok := m.stats[key]; ok {
-	//	st.CountDisplay++
-	//} else {
-	//	m.stats[key] = &model.Stats{Slot: slot, Group: group, CountDisplay: 1, Clicks: 0}
-	//}
-	//return nil
 	item := struct {
 		slot   model.SlotId
 		group  model.GroupId

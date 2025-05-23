@@ -36,16 +36,17 @@ func AddBannerHandler(repo *postgres.PostgresRepo) http.HandlerFunc {
 			//if err != nil {
 			//	return
 			//}
-			json.NewEncoder(w).Encode(jsonResponse{Message: "invalid request body"})
+			_ = json.NewEncoder(w).Encode(jsonResponse{Message: "invalid request body"})
+
 			return
 		}
 		if err := repo.AddBanner(context.Background(), slot, req.BannerID); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(jsonResponse{Message: err.Error()})
+			_ = json.NewEncoder(w).Encode(jsonResponse{Message: err.Error()})
 			return
 		}
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(jsonResponse{Message: "banner added"})
+		_ = json.NewEncoder(w).Encode(jsonResponse{Message: "banner added"})
 	}
 }
 
@@ -57,11 +58,11 @@ func RemoveBannerHandler(repo *postgres.PostgresRepo) http.HandlerFunc {
 		banner := model.BannerId(vars["banner"])
 		if err := repo.RemoveBanner(context.Background(), slot, banner); err != nil {
 			w.WriteHeader(http.StatusNotFound)
-			json.NewEncoder(w).Encode(jsonResponse{Message: err.Error()})
+			_ = json.NewEncoder(w).Encode(jsonResponse{Message: err.Error()})
 			return
 		}
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(jsonResponse{Message: "banner removed"})
+		_ = json.NewEncoder(w).Encode(jsonResponse{Message: "banner removed"})
 	}
 }
 
@@ -72,17 +73,17 @@ func RotateBannerHandler(svc *service.RotationService) http.HandlerFunc {
 		group := model.GroupId(r.URL.Query().Get("group"))
 		if group == "" {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(jsonResponse{Message: "missing group query parameter"})
+			_ = json.NewEncoder(w).Encode(jsonResponse{Message: "missing group query parameter"})
 			return
 		}
 		banner, err := svc.Rotate(context.Background(), slot, group)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(jsonResponse{Message: err.Error()})
+			_ = json.NewEncoder(w).Encode(jsonResponse{Message: err.Error()})
 			return
 		}
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(jsonResponse{BannerID: banner})
+		_ = json.NewEncoder(w).Encode(jsonResponse{BannerID: banner})
 	}
 }
 
@@ -99,15 +100,15 @@ func RecordClickHandler(repo *postgres.PostgresRepo) http.HandlerFunc {
 		//}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(jsonResponse{Message: "invalid request body"})
+			_ = json.NewEncoder(w).Encode(jsonResponse{Message: "invalid request body"})
 			return
 		}
 		if err := repo.IncrementClick(context.Background(), slot, req.BannerID, req.GroupID); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(jsonResponse{Message: err.Error()})
+			_ = json.NewEncoder(w).Encode(jsonResponse{Message: err.Error()})
 			return
 		}
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(jsonResponse{Message: "click recorded"})
+		_ = json.NewEncoder(w).Encode(jsonResponse{Message: "click recorded"})
 	}
 }
